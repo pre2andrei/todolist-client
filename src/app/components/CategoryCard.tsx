@@ -1,5 +1,18 @@
-import { closestCorners, DndContext } from "@dnd-kit/core";
-import { arrayMove, SortableContext, useSortable } from "@dnd-kit/sortable";
+import {
+  closestCorners,
+  DndContext,
+  KeyboardSensor,
+  MouseSensor,
+  TouchSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+} from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import axios from "axios";
 import { motion } from "framer-motion";
@@ -30,12 +43,19 @@ const CategoryCard = ({ category, deleteCategory }: Props) => {
   const [editMode, setEditMode] = useState(false);
   const [deleteMode, setDeleteMode] = useState(false);
 
-  const { attributes, listeners, setNodeRef, transform, transition } =
-    useSortable({ id: category.id });
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: category.id });
 
   const style = {
     transition,
     transform: CSS.Transform.toString(transform),
+    opacity: isDragging ? 0.5 : 1,
   };
 
   const {
@@ -100,6 +120,23 @@ const CategoryCard = ({ category, deleteCategory }: Props) => {
       });
   };
 
+  const sensors = useSensors(
+    useSensor(MouseSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    }),
+    useSensor(TouchSensor, {
+      activationConstraint: {
+        delay: 300,
+        tolerance: 8,
+      },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
   return (
     <div
       ref={setNodeRef}
@@ -107,7 +144,11 @@ const CategoryCard = ({ category, deleteCategory }: Props) => {
       style={style}
       className="flex items-center gap-1"
     >
-      <div className="py-[10px] border border-gray-400 rounded-2xl w-[50vw] min-w-64 max-w-[476px] bg-white">
+      <div
+        className={`py-[10px] border ${
+          isDragging ? "border-primary" : "border-gray-400"
+        } rounded-2xl w-[50vw] min-w-64 max-w-[476px] bg-white`}
+      >
         <form onSubmit={handleSubmit(submit)}>
           <div
             className={`flex flex-col ${
@@ -131,9 +172,7 @@ const CategoryCard = ({ category, deleteCategory }: Props) => {
                     placeholder="Name"
                   />
                 ) : (
-                  <div className="font-semibold w-full mx-4">
-                    {state.name}
-                  </div>
+                  <div className="font-semibold w-full mx-4">{state.name}</div>
                 )}
               </div>
             )}
@@ -208,7 +247,7 @@ const CategoryCard = ({ category, deleteCategory }: Props) => {
                   </button>
                   <button
                     onClick={(e) => {
-                      e.preventDefault()
+                      e.preventDefault();
                       setEditMode(false);
                     }}
                   >
@@ -246,6 +285,7 @@ const CategoryCard = ({ category, deleteCategory }: Props) => {
           <DndContext
             onDragEnd={DragHandler}
             collisionDetection={closestCorners}
+            sensors={sensors}
           >
             <SortableContext items={state.items}>
               {state.items

@@ -10,6 +10,7 @@ import AddCategoryCard from "./components/AddCategoryCard";
 import {
   DndContext,
   KeyboardSensor,
+  MouseSensor,
   PointerSensor,
   TouchSensor,
   closestCorners,
@@ -129,9 +130,20 @@ export default function Home() {
   
 
   const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(TouchSensor),
-    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+    useSensor(MouseSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    }),
+    useSensor(TouchSensor, {
+      activationConstraint: {
+        delay: 300,
+        tolerance: 8,
+      },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    }),
   );
 
   if (isLoading) return <LoadingScreen />;

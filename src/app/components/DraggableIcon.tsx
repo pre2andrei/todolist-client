@@ -5,7 +5,7 @@ const DraggableIcon = () => {
       fill="currentColor"
       strokeWidth="0"
       viewBox="0 0 512 512"
-      height="2.5em"
+      height="1.5em"
       width="1.5em"
       xmlns="http://www.w3.org/2000/svg"
     >

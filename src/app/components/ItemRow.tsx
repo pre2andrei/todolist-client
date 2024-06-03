@@ -32,12 +32,13 @@ const ItemRow = ({
     setEditMode(!editMode);
   };
 
-  const { attributes, listeners, setNodeRef, transform, transition } =
+  const { attributes, listeners, setNodeRef, transform, transition,isDragging } =
     useSortable({ id: item.id });
 
   const style = {
     transition,
     transform: CSS.Transform.toString(transform),
+    opacity: isDragging ? 0.5 : 1,
   };
 
   const deleteItem = () => {
@@ -94,7 +95,7 @@ const ItemRow = ({
     );
 
   return (
-    <div ref={setNodeRef} {...attributes} style={style} className="flex">
+    <div ref={setNodeRef} {...attributes} style={style} className="flex items-center">
       <div className="flex-1 min-w-32 self-start text-nowrap flex gap-4 overflow-hidden">
         {isLoading ? (
           <div className="md:w-6 md:h-6 accent-primary text-primary">
@@ -129,7 +130,7 @@ const ItemRow = ({
           <DeleteIcon />
         </button>
       </div>
-      <div {...listeners} className="text-primary">
+      <div {...listeners} className="text-primary py-1">
         <DraggableIcon />
       </div>
     </div>
