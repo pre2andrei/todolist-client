@@ -35,7 +35,7 @@ const EditItemRow = ({ item, categorySetter, modeSetter, category }: Props) => {
           ...(item.id && { itemId: item.id }),
           categoryId: category.id,
           name: data.name,
-          ...(data.measurement!==Measurement.NONE && { quantity: data.quantity }),
+          ...(data.measurement!==Measurement.NONE && { quantity: +(data.quantity) }),
           measurement: data.measurement,
           order:
            category.items.length ? category.items
