@@ -21,7 +21,7 @@ const AddCategoryCard = ({ addModeSetter, saveCategory }: Props) => {
             }}
             value={newName}
             type="text"
-            className="border rounded-lg border-gray-400 px-2 text-black font-semibold max-w-44"
+            className="border rounded-lg border-gray-400 px-2 text-black font-semibold min-w-44 w-full mr-2"
             placeholder="name"
           />
         </div>
